@@ -16,6 +16,10 @@ else
 	POSTGRES_LISTEN_ADDRESSES=$(echo $POSTGRES_LISTEN_ADDRESS | sed "s/\/[0-9]\{1,2\}$//g")
 fi
 
+if [ -z $POSTGRES_LISTEN_PORT ]; then
+	POSTGRES_LISTEN_PORT=5432
+fi
+
 echo "Initializing role $POSTGRES_USERNAME..."
 
 service postgresql start
@@ -41,7 +45,7 @@ fi
 #Replace listen address with all everything.
 sed -i "s/listen_addresses.*/listen_addresses = '$POSTGRES_LISTEN_ADDRESSES'/g" /etc/postgresql/9.4/main/postgresql.conf
 sed -i "s/#listen_addresses/listen_addresses/g" /etc/postgresql/9.4/main/postgresql.conf
+sed -Ei "s/port = [0-9]+/port = $POSTGRES_LISTEN_PORT/g" /etc/postgresql/9.4/main/postgresql.conf
 echo "Network addresses setup."
 echo "Starting database..."
-cat /etc/postgresql/9.4/main/pg_hba.conf
 exec sudo -u postgres /usr/lib/postgresql/9.4/bin/postgres --config-file=/etc/postgresql/9.4/main/postgresql.conf
