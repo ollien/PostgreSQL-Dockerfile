@@ -45,7 +45,7 @@ fi
 #Replace listen address with all everything.
 sed -i "s/listen_addresses.*/listen_addresses = '$POSTGRES_LISTEN_ADDRESSES'/g" /etc/postgresql/9.4/main/postgresql.conf
 sed -i "s/#listen_addresses/listen_addresses/g" /etc/postgresql/9.4/main/postgresql.conf
-sed -Ei "s/port = [0-9]+/port = $POSTGRES_LISTEN_PORT/g" /etc/postgresql/9.4/main/postgresql.conf
+sed -Ei "s/port *= *[0-9]+/port = $POSTGRES_LISTEN_PORT/g" /etc/postgresql/9.4/main/postgresql.conf
 echo "Network addresses setup."
 echo "Starting database..."
 exec sudo -u postgres /usr/lib/postgresql/9.4/bin/postgres --config-file=/etc/postgresql/9.4/main/postgresql.conf
