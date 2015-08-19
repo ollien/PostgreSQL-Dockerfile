@@ -39,8 +39,8 @@ if !(grep "$connString" /etc/postgresql/9.4/main/pg_hba.conf) then
  echo $connString >> /etc/postgresql/9.4/main/pg_hba.conf;
 fi
 #Replace listen address with all everything.
-sed -i "s/listen_addresses.*/listen_addresses='$POSTGRES_LISTEN_ADDRESSES'/g" /etc/postgresql/9.4/main/postgresql.conf
-sed -i "s/#listen_addresses=/listen_addresses=/g" /etc/postgresql/9.4/main/postgresql.conf
+sed -i "s/listen_addresses.*/listen_addresses = '$POSTGRES_LISTEN_ADDRESSES'/g" /etc/postgresql/9.4/main/postgresql.conf
+sed -i "s/#listen_addresses/listen_addresses/g" /etc/postgresql/9.4/main/postgresql.conf
 echo "Network addresses setup."
 echo "Starting database..."
 cat /etc/postgresql/9.4/main/pg_hba.conf
