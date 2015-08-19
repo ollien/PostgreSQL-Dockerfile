@@ -1,5 +1,5 @@
 FROM ubuntu:trusty
-MAINTAINER Nicholas Krichevsky <nick@ollien.com>
+MAINTAINER Nick Krichevsky <nick@ollien.com>
 
 RUN groupadd -r postgres
 RUN useradd -r -g postgres postgres
