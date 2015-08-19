@@ -12,4 +12,5 @@ RUN apt-get install -y postgresql-9.4
 COPY cmd.sh /root/cmd.sh
 RUN chmod +x /root/cmd.sh
 EXPOSE 5432
+EXPOSE 5433
 CMD ["/root/cmd.sh"]
