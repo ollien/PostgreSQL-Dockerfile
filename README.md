@@ -1,4 +1,4 @@
-#PostgreSQL Dockerfile
+# PostgreSQL Dockerfile
 
 This is just a quick Dockerfile you can use to build a container for Postgres. Run `docker build` with cmd.sh in the same folder as the Dockerfile and you're good to go!
 
