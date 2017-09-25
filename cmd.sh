@@ -20,9 +20,13 @@ if [ -z $POSTGRES_LISTEN_PORT ]; then
 	POSTGRES_LISTEN_PORT=5432
 fi
 
+service postgresql start
+
+POSTGRES_CONFIG_LOCATION=$(psql -qAtX -c "SHOW config_file;" postgres)
+POSTGRES_HBA_LOCATION=$(psql -qAtX -c "SHOW hba_file;" postgres)
+
 echo "Initializing role $POSTGRES_USERNAME..."
 
-service postgresql start
 if [ -z $POSTGRES_PASSWORD ]; then
 	sudo -u postgres psql -c "DO \$\$ BEGIN IF NOT EXISTS(SELECT * FROM pg_catalog.pg_user WHERE usename='$POSTGRES_USERNAME') THEN CREATE ROLE $POSTGRES_USERNAME SUPERUSER LOGIN; END IF; END \$\$;"
 	echo "Initialized role $POSTGRES_USERNAME without password. Be warned: Anyone will be able to connect to this."
@@ -39,13 +43,13 @@ service postgresql stop;
 
 echo "Setting up network addresses..."
 #If our connString isn't already in there, add it in.
-if !(grep "$connString" /etc/postgresql/9.4/main/pg_hba.conf) then
- echo $connString >> /etc/postgresql/9.4/main/pg_hba.conf;
+if !(grep "$connString" $POSTGRES_HBA_LOCATION) then
+ echo $connString >> $POSTGRES_HBA_LOCATION;
 fi
 #Replace listen address with all everything.
-sed -i "s/listen_addresses.*/listen_addresses = '$POSTGRES_LISTEN_ADDRESSES'/g" /etc/postgresql/9.4/main/postgresql.conf
-sed -i "s/#listen_addresses/listen_addresses/g" /etc/postgresql/9.4/main/postgresql.conf
-sed -Ei "s/port *= *[0-9]+/port = $POSTGRES_LISTEN_PORT/g" /etc/postgresql/9.4/main/postgresql.conf
+sed -i "s/listen_addresses.*/listen_addresses = '$POSTGRES_LISTEN_ADDRESSES'/g" $POSTGRES_CONFIG_LOCATION
+sed -i "s/#listen_addresses/listen_addresses/g" $POSTGRES_CONFIG_LOCATION
+sed -Ei "s/port *= *[0-9]+/port = $POSTGRES_LISTEN_PORT/g" $POSTGRES_CONFIG_LOCATION
 echo "Network addresses setup."
 echo "Starting database..."
 exec sudo -u postgres /usr/lib/postgresql/9.4/bin/postgres --config-file=/etc/postgresql/9.4/main/postgresql.conf
