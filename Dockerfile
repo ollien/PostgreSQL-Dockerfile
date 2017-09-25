@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM ubuntu:xenial
 MAINTAINER Nick Krichevsky <nick@ollien.com>
 
 COPY cmd.sh /cmd.sh
