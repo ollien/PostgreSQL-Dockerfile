@@ -24,6 +24,7 @@ service postgresql start
 
 POSTGRES_CONFIG_LOCATION=$(psql -qAtX -c "SHOW config_file;" postgres)
 POSTGRES_HBA_LOCATION=$(psql -qAtX -c "SHOW hba_file;" postgres)
+POSTGRES_VERSION=$(psql -qAtX -c "SELECT version();" |grep -Po "(?<=PostgreSQL[[:space:]])[[:digit:]]\.[[:digit:]]")
 
 echo "Initializing role $POSTGRES_USERNAME..."
 
@@ -52,4 +53,4 @@ sed -i "s/#listen_addresses/listen_addresses/g" $POSTGRES_CONFIG_LOCATION
 sed -Ei "s/port *= *[0-9]+/port = $POSTGRES_LISTEN_PORT/g" $POSTGRES_CONFIG_LOCATION
 echo "Network addresses setup."
 echo "Starting database..."
-exec sudo -u postgres /usr/lib/postgresql/9.4/bin/postgres --config-file=/etc/postgresql/9.4/main/postgresql.conf
+exec pg_ctlcluster $POSTGRES_VERSION main start --foreground
