@@ -29,13 +29,13 @@ POSTGRES_VERSION=$(psql -qAtX -c "SELECT version();" |grep -Po "(?<=PostgreSQL[[
 echo "Initializing role $POSTGRES_USERNAME..."
 
 if [ -z $POSTGRES_PASSWORD ]; then
-	sudo -u postgres psql -c "DO \$\$ BEGIN IF NOT EXISTS(SELECT * FROM pg_catalog.pg_user WHERE usename='$POSTGRES_USERNAME') THEN CREATE ROLE $POSTGRES_USERNAME SUPERUSER LOGIN; END IF; END \$\$;"
+	psql -c "DO \$\$ BEGIN IF NOT EXISTS(SELECT * FROM pg_catalog.pg_user WHERE usename='$POSTGRES_USERNAME') THEN CREATE ROLE $POSTGRES_USERNAME SUPERUSER LOGIN; END IF; END \$\$;"
 	echo "Initialized role $POSTGRES_USERNAME without password. Be warned: Anyone will be able to connect to this."
 	#Allow connections with no auth
 	connString="host all all $POSTGRES_LISTEN_ADDRESS trust"
 
 else
-	sudo -u postgres psql -c "DO \$\$ BEGIN IF NOT EXISTS(SELECT * FROM pg_catalog.pg_user WHERE usename='$POSTGRES_USERNAME') THEN CREATE ROLE $POSTGRES_USERNAME SUPERUSER LOGIN PASSWORD '$POSTGRES_PASSWORD'; END IF; END \$\$;"
+	psql -c "DO \$\$ BEGIN IF NOT EXISTS(SELECT * FROM pg_catalog.pg_user WHERE usename='$POSTGRES_USERNAME') THEN CREATE ROLE $POSTGRES_USERNAME SUPERUSER LOGIN PASSWORD '$POSTGRES_PASSWORD'; END IF; END \$\$;"
 	echo "Initialized role $POSTGRES_USERNAME with password."
 	#Allow connections with auth
 	connString="host all all $POSTGRES_LISTEN_ADDRESS md5"
